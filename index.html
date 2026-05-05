@@ -302,62 +302,155 @@
         const scrollIndicator = document.getElementById('scrollIndicator');
 
         const panelsData = [
-            // 0: Хиро
-            {
-                html: `
-                    <h1>Коллективный<br>разум</h1>
-                    <div class="sub" style="font-size:20px;color:#ccc;">Не совсем студия</div>
-                    <div class="sub" style="margin-top:10px;">Делаю сайты и AI-системы быстрее,<br>чем это обычно происходит</div>
-                    <div class="sub" style="margin-top:8px;font-size:14px;color:#666;">↓ скролль вниз</div>
-                `
-            },
-            // 1: Команда
-            {
-                html: `
-                    <h2>Команда без лишнего шума</h2>
-                    <div class="grid-tags">
-                        <div class="tag">Архитектура</div>
-                        <div class="tag">Дизайн</div>
-                        <div class="tag">Разработка</div>
-                        <div class="tag">AI</div>
-                        <div class="tag">Деплой</div>
+    // 0: Хиро
+    {
+        html: `
+            <h1>Коллективный<br>разум</h1>
+            <div class="sub" style="font-size:20px;color:#ccc;">Не совсем студия</div>
+            <div class="sub" style="margin-top:10px;">Делаю проекты за дни,<br>когда у других это недели</div>
+            <div class="sub" style="margin-top:8px;font-size:14px;color:#666;">↓ скролль вниз</div>
+        `
+    },
+    // 1: Команда
+    {
+        html: `
+            <h2>Команда без лишнего шума</h2>
+            <div class="grid-tags">
+                <div class="tag">Архитектура</div>
+                <div class="tag">Дизайн</div>
+                <div class="tag">Разработка</div>
+                <div class="tag">AI</div>
+                <div class="tag">Деплой</div>
+            </div>
+        `
+    },
+    // 2: Разоблачение
+    {
+        html: `
+            <h2>На самом деле — <span class="accent">один человек</span></h2>
+            <div class="sub" style="font-size:18px;">Без менеджеров · Без передачи задач</div>
+            <div class="sub" style="margin-top:12px; color:#aaa;">Вам не нужно управлять командой.<br>Вам нужен человек, который доведёт до результата.</div>
+            <div class="name-block">
+                <b>Ренат Ахатов</b>
+                <span>Tech-директор · AI-инженер</span>
+            </div>
+        `
+    },
+    // 3: Проекты (обновлённые кейсы)
+    {
+        html: `
+            <h2>Проекты</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px;">
+                <div style="
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid #2a2a2a;
+                    padding: 18px 20px;
+                    border-radius: 16px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: .3s;
+                    flex: 1 1 calc(50% - 6px);
+                    min-width: 180px;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                " onclick="window.open('https://t.me/rvtst','_blank')"
+                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
+                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
+                    <span style="font-size:24px;">🤖</span>
+                    <div>
+                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">AI-бот лаборант (Telegram)</div>
+                        <div style="color:#999; font-size:12px; line-height:1.5;">Отвечает пользователям, генерирует ответы через AI</div>
+                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">Открыть →</div>
                     </div>
-                `
-            },
-            // 2: Разоблачение
-            {
-                html: `
-                    <h2>На самом деле — <span class="accent">один человек</span></h2>
-                    <div class="sub" style="font-size:18px;">Без менеджеров · Без передачи задач</div>
-                    <div class="name-block">
-                        <b>Ренат Ахатов</b>
-                        <span>Tech-директор · AI-инженер</span>
+                </div>
+                <div style="
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid #2a2a2a;
+                    padding: 18px 20px;
+                    border-radius: 16px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: .3s;
+                    flex: 1 1 calc(50% - 6px);
+                    min-width: 180px;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                " onclick="window.open('https://t.me/rvtst','_blank')"
+                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
+                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
+                    <span style="font-size:24px;">🌐</span>
+                    <div>
+                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">Лендинг под ключ</div>
+                        <div style="color:#999; font-size:12px; line-height:1.5;">Сайт + буклет + PDF · деплой + SEO</div>
+                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">Посмотреть →</div>
                     </div>
-                `
-            },
-            // 3: Проекты
-            {
-                html: `
-                    <h2>Проекты</h2>
-                    <div class="grid-tags">
-                        <div class="tag">Три богатыря: сайт·бот·PDF</div>
-                        <div class="tag">Биохакинг: автоматизация</div>
-                        <div class="tag">AI-аватар: голос·логика</div>
+                </div>
+                <div style="
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid #2a2a2a;
+                    padding: 18px 20px;
+                    border-radius: 16px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: .3s;
+                    flex: 1 1 calc(50% - 6px);
+                    min-width: 180px;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                " onclick="window.open('https://t.me/rvtst','_blank')"
+                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
+                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
+                    <span style="font-size:24px;">🏛️</span>
+                    <div>
+                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">Сайт музея</div>
+                        <div style="color:#999; font-size:12px; line-height:1.5;">Дизайн + структура · адаптив + публикация</div>
+                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">Посмотреть →</div>
                     </div>
-                    <div class="sub" style="margin-top:16px;">5 дней от идеи до деплоя</div>
-                `
-            },
-            // 4: CTA
-            {
-                html: `
-                    <h2>Вам не нужна команда</h2>
-                    <div class="sub" style="font-size:20px;color:#ccc;">Вам нужен результат</div>
-                    <a href="https://t.me/rvtst" class="btn">@rvtst</a>
-                    <div style="margin-top:14px;font-size:14px;color:#666;">связь напрямую · без менеджеров</div>
-                `
-            }
-        ];
-
+                </div>
+                <div style="
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid #2a2a2a;
+                    padding: 18px 20px;
+                    border-radius: 16px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: .3s;
+                    flex: 1 1 calc(50% - 6px);
+                    min-width: 180px;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                " onclick="window.open('https://t.me/rvtst','_blank')"
+                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
+                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
+                    <span style="font-size:24px;">⚙️</span>
+                    <div>
+                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">Парсеры Telegram</div>
+                        <div style="color:#999; font-size:12px; line-height:1.5;">Сбор данных · автоматизация процессов</div>
+                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">GitHub →</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sub" style="margin-top:20px; color:#00ffc3;">5 дней от идеи до деплоя</div>
+        `
+    },
+    // 4: CTA
+    {
+        html: `
+            <h2>Вам не нужна команда</h2>
+            <div class="sub" style="font-size:20px;color:#ccc;">Вам нужен результат</div>
+            <a href="https://t.me/rvtst" class="btn">@rvtst</a>
+            <div style="margin-top:14px;font-size:14px;color:#666;">связь напрямую · без менеджеров</div>
+        `
+    }
+];
         const panels = [];
         const totalPanels = panelsData.length;
 
