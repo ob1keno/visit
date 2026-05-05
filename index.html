@@ -25,7 +25,6 @@
         .scroll-container {
             position: relative;
             height: 500vh;
-            /* 5 секций */
         }
 
         /* ===== ФИКСИРОВАННЫЙ ВЬЮПОРТ ===== */
@@ -41,6 +40,104 @@
             overflow: hidden;
         }
 
+        /* ===== ПРОГРЕСС-БАР ИЗ МИНИ-БЛОКОВ ===== */
+        .brain-bar {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 4px;
+            align-items: stretch;
+            padding: 8px 12px;
+            background: rgba(12, 12, 12, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            pointer-events: auto;
+            max-width: 95vw;
+            overflow-x: auto;
+        }
+
+        .brain-mini {
+            flex-shrink: 0;
+            width: 130px;
+            padding: 8px 10px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #555;
+            font-size: 9px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+            opacity: 0.0935;
+            transform: scale(0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            line-height: 1.25;
+        }
+
+        .brain-mini.visible {
+            opacity: 0.485;
+            transform: scale(1);
+            background: rgba(0, 255, 195, 0.05);
+            border-color: rgba(0, 255, 195, 0.2);
+            color: #bbb;
+        }
+
+        .brain-mini.active-step {
+            opacity: 1;
+            transform: scale(1.08);
+            background: rgba(0, 255, 195, 0.1);
+            border-color: #00ffc3;
+            color: #fff;
+            box-shadow: 0 0 24px rgba(0, 255, 195, 0.2);
+        }
+
+        .brain-mini .mini-title {
+            font-weight: 700;
+            font-size: 12px;
+            color: inherit;
+        }
+
+        .brain-mini .mini-sub {
+            font-size: 9px;
+            color: inherit;
+            opacity: 0.7;
+        }
+
+        .brain-mini .mini-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 8px;
+            margin-top: 2px;
+        }
+
+        .brain-mini.active-step .mini-title {
+            color: #00ffc3;
+        }
+
+        .brain-arrow {
+            flex-shrink: 0;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: color 0.5s;
+        }
+
+        .brain-arrow.lit {
+            color: rgba(0, 255, 195, 0.5);
+        }
+
         /* ===== СЕКЦИЯ (ОДНО ПОЛОТНО) ===== */
         .panel {
             position: absolute;
@@ -52,8 +149,7 @@
             border-radius: 32px;
             backdrop-filter: blur(20px);
             box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
-
-            /* начальное состояние — скрыто снизу */
+            z-index: 1;
             transform: translateY(120px) scale(0.88);
             opacity: 0;
             transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -61,14 +157,12 @@
             pointer-events: none;
         }
 
-        /* активная панель */
         .panel.active {
             transform: translateY(0) scale(1);
             opacity: 1;
             pointer-events: auto;
         }
 
-        /* уходящая панель (уменьшается и исчезает) */
         .panel.exit {
             transform: translateY(-60px) scale(0.82);
             opacity: 0;
@@ -167,7 +261,6 @@
             margin-top: 4px;
         }
 
-        /* скролл-индикатор */
         .scroll-indicator {
             position: fixed;
             bottom: 28px;
@@ -196,21 +289,46 @@
                 padding: 36px 24px;
                 width: 94vw;
             }
+
+            .brain-bar {
+    gap: 3px;
+    padding: 5px 6px;
+}
+
+            .brain-mini {
+    width: 60px;           /* было 90px — уменьшил */
+    padding: 5px 6px;      /* было 6px 8px */
+    border-radius: 12px;
+    font-size: 8px;
+    gap: 1px;
+}
+.brain-mini .mini-title {
+    font-size: 9px;        /* было 10px */
+}
+.brain-mini .mini-sub {
+    font-size: 6px;        /* было 7px */
+}
+.brain-mini .mini-tag {
+    font-size: 6px;
+    padding: 1px 4px;
+}
+
+            .brain-arrow {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- частицы -->
     <canvas id="bg"></canvas>
 
-    <!-- сцена -->
     <div class="stage" id="stage">
-        <!-- панели будут созданы в JS -->
+        <!-- Прогресс-бар из мини-моделей блоков -->
+        <div class="brain-bar" id="brainBar"></div>
     </div>
 
-    <!-- прокруточное пространство -->
     <div class="scroll-container" id="scrollContainer"></div>
 
     <div class="scroll-indicator" id="scrollIndicator">↓ скролль</div>
@@ -275,7 +393,6 @@
                 ctx.fill();
             });
 
-            // линии
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
@@ -300,164 +417,89 @@
         const stage = document.getElementById('stage');
         const scrollContainer = document.getElementById('scrollContainer');
         const scrollIndicator = document.getElementById('scrollIndicator');
+        const brainBar = document.getElementById('brainBar');
 
         const panelsData = [
-    // 0: Хиро
-    {
-        html: `
-            <h1>Коллективный<br>разум</h1>
-            <div class="sub" style="font-size:20px;color:#ccc;">Не совсем студия</div>
-            <div class="sub" style="margin-top:10px;">Делаю проекты за дни,<br>когда у других это недели</div>
-            <div class="sub" style="margin-top:8px;font-size:14px;color:#666;">↓ скролль вниз</div>
-        `
-    },
-    // 1: Команда
-    {
-        html: `
-            <h2>Команда без лишнего шума</h2>
-            <div class="grid-tags">
-                <div class="tag">Архитектура</div>
-                <div class="tag">Дизайн</div>
-                <div class="tag">Разработка</div>
-                <div class="tag">AI</div>
-                <div class="tag">Деплой</div>
-            </div>
-        `
-    },
-    // 2: Разоблачение
-    {
-        html: `
-            <h2>На самом деле — <span class="accent">один человек</span></h2>
-            <div class="sub" style="font-size:18px;">Без менеджеров · Без передачи задач</div>
-            <div class="sub" style="margin-top:12px; color:#aaa;">Вам не нужно управлять командой.<br>Вам нужен человек, который доведёт до результата.</div>
-            <div class="name-block">
-                <b>Ренат Ахатов</b>
-                <span>Tech-директор · AI-инженер</span>
-            </div>
-        `
-    },
-  // 3: Проекты (исправленные для мобилок)
-{
-    html: `
-        <h2>Проекты</h2>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;">
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">🤖</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">AI-бот лаборант</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Отвечает пользователям через AI</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">🌐</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Лендинг под ключ</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Сайт + буклет + PDF · SEO</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">🏛️</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Сайт музея</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Дизайн + структура · адаптив</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">⚙️</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Парсеры Telegram</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Сбор данных · автоматизация</div>
-                </div>
-            </div>
-        </div>
-        <div class="sub" style="margin-top:16px; color:#00ffc3; font-size:15px;">5 дней от идеи до деплоя</div>
-    `
-},
-    // 4: CTA
-    {
-        html: `
-            <h2>Вам не нужна команда</h2>
-            <div class="sub" style="font-size:20px;color:#ccc;">Вам нужен результат</div>
-            <a href="https://t.me/rvtst" class="btn">@rvtst</a>
-            <div style="margin-top:14px;font-size:14px;color:#666;">связь напрямую · без менеджеров</div>
-        `
-    }
-];
+            {
+                html: `
+                    <h1>Коллективный<br>разум</h1>
+                    <div class="sub" style="font-size:20px;color:#ccc;">Не совсем студия</div>
+                    <div class="sub" style="margin-top:10px;">Делаю сайты и AI-системы быстрее,<br>чем это обычно происходит</div>
+                    <div class="sub" style="margin-top:8px;font-size:14px;color:#666;">↓ скролль вниз</div>
+                `,
+                mini: {
+                    title: 'Коллективный разум',
+                    sub: 'Не совсем студия',
+                    tag: 'Старт'
+                }
+            },
+            {
+                html: `
+                    <h2>Команда без лишнего шума</h2>
+                    <div class="grid-tags">
+                        <div class="tag">Архитектура</div>
+                        <div class="tag">Дизайн</div>
+                        <div class="tag">Разработка</div>
+                        <div class="tag">AI</div>
+                        <div class="tag">Деплой</div>
+                    </div>
+                `,
+                mini: {
+                    title: 'Команда',
+                    sub: 'Без лишнего шума',
+                    tag: 'Ядро'
+                }
+            },
+            {
+                html: `
+                    <h2>На самом деле — <span class="accent">один человек</span></h2>
+                    <div class="sub" style="font-size:18px;">Без менеджеров · Без передачи задач</div>
+                    <div class="name-block">
+                        <b>Ренат Ахатов</b>
+                        <span>Tech-директор · AI-инженер</span>
+                    </div>
+                `,
+                mini: {
+                    title: 'Один человек',
+                    sub: 'Ренат Ахатов',
+                    tag: 'Истина'
+                }
+            },
+            {
+                html: `
+                    <h2>Проекты</h2>
+                    <div class="grid-tags">
+                        <div class="tag">Три богатыря: сайт·бот·PDF</div>
+                        <div class="tag">Биохакинг: автоматизация</div>
+                        <div class="tag">AI-аватар: голос·логика</div>
+                    </div>
+                    <div class="sub" style="margin-top:16px;">5 дней от идеи до деплоя</div>
+                `,
+                mini: {
+                    title: 'Проекты',
+                    sub: '5 дней до деплоя',
+                    tag: 'Опыт'
+                }
+            },
+            {
+                html: `
+                    <h2>Вам не нужна команда</h2>
+                    <div class="sub" style="font-size:20px;color:#ccc;">Вам нужен результат</div>
+                    <a href="https://t.me/rvtst" class="btn">@rvtst</a>
+                    <div style="margin-top:14px;font-size:14px;color:#666;">связь напрямую · без менеджеров</div>
+                `,
+                mini: {
+                    title: 'Результат',
+                    sub: 'Связь напрямую',
+                    tag: 'Финал'
+                }
+            }
+        ];
+
         const panels = [];
         const totalPanels = panelsData.length;
 
+        // Создаём основные панели
         panelsData.forEach((data, i) => {
             const panel = document.createElement('div');
             panel.className = 'panel';
@@ -467,57 +509,98 @@
             panels.push(panel);
         });
 
-        // Первая панель активна
         panels[0].classList.add('active');
 
+        /* ===== ПРОГРЕСС-БАР ИЗ МИНИ-МОДЕЛЕЙ БЛОКОВ ===== */
+        const miniCards = [];
+        const arrows = [];
+
+        panelsData.forEach((data, i) => {
+            // Создаём мини-карточку — уменьшенную модель блока
+            const mini = document.createElement('div');
+            mini.className = 'brain-mini';
+            mini.innerHTML = `
+                <div class="mini-title">${data.mini.title}</div>
+              
+            `;
+            mini.dataset.index = i;
+            brainBar.appendChild(mini);
+            miniCards.push(mini);
+
+            // Стрелка между блоками (кроме последнего)
+            if (i < totalPanels - 1) {
+                const arrow = document.createElement('div');
+                arrow.className = 'brain-arrow';
+                arrow.innerHTML = '→';
+                brainBar.appendChild(arrow);
+                arrows.push(arrow);
+            }
+        });
+
         /* ===== ЛОГИКА СКРОЛЛА ===== */
-        const panelHeight = window.innerHeight; // высота скролла на одну смену
+        const panelHeight = window.innerHeight;
         const totalScrollHeight = panelHeight * totalPanels;
         scrollContainer.style.height = totalScrollHeight + 'px';
 
         let currentActive = 0;
 
+        function updateProgressBar(activeIndex) {
+            // Обновляем мини-карточки
+            miniCards.forEach((mini, idx) => {
+                mini.classList.remove('visible', 'active-step');
+
+                if (idx < activeIndex) {
+                    // Уже просмотрена
+                    mini.classList.add('visible');
+                } else if (idx === activeIndex) {
+                    // Текущая
+                    mini.classList.add('active-step');
+                }
+            });
+
+            // Подсвечиваем стрелки между просмотренными блоками
+            arrows.forEach((arrow, idx) => {
+                if (idx < activeIndex) {
+                    arrow.classList.add('lit');
+                } else {
+                    arrow.classList.remove('lit');
+                }
+            });
+        }
+
         function updatePanels() {
             const scrollY = window.scrollY;
             const rawIndex = scrollY / panelHeight;
             const activeIndex = Math.min(Math.floor(rawIndex), totalPanels - 1);
-
-            // прогресс внутри текущего перехода (0..1)
             const progress = rawIndex - activeIndex;
 
             if (activeIndex !== currentActive) {
-                // Снимаем все классы и сбрасываем инлайн-стили у всех панелей
                 panels.forEach(p => {
                     p.classList.remove('active', 'exit');
                     p.style.transform = '';
                     p.style.opacity = '';
                 });
 
-                // Назначаем новой активной панели класс active
                 panels[activeIndex].classList.add('active');
-                
-                // Панель, которая была активна, получает класс exit,
-                // если она существует и не совпадает с новой активной
+
                 if (currentActive < panels.length && currentActive !== activeIndex) {
                     panels[currentActive].classList.add('exit');
                 }
-                
+
                 currentActive = activeIndex;
+                updateProgressBar(activeIndex);
             }
 
-            // Плавное угасание активной панели к концу её зоны
             if (progress > 0.5 && activeIndex < totalPanels - 1) {
-                const fadeProgress = (progress - 0.5) * 2; // 0..1 во второй половине
+                const fadeProgress = (progress - 0.5) * 2;
                 panels[activeIndex].style.transform =
                     `translateY(${-50 * fadeProgress}px) scale(${1 - 0.12 * fadeProgress})`;
                 panels[activeIndex].style.opacity = 1 - fadeProgress * 0.85;
             } else {
-                // Возвращаем к исходным значениям (важно при скролле вверх)
                 panels[activeIndex].style.transform = 'translateY(0) scale(1)';
                 panels[activeIndex].style.opacity = '1';
             }
 
-            // Индикатор скролла
             if (scrollY < 100) {
                 scrollIndicator.style.opacity = '1';
             } else {
@@ -527,14 +610,14 @@
 
         window.addEventListener('scroll', updatePanels);
         window.addEventListener('resize', () => {
-            // пересчёт высоты
             const newPanelHeight = window.innerHeight;
             scrollContainer.style.height = (newPanelHeight * totalPanels) + 'px';
             updatePanels();
         });
 
-        // начальное состояние
+        // Старт
         updatePanels();
+        updateProgressBar(0);
     </script>
 
 </body>
