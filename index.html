@@ -336,111 +336,115 @@
             </div>
         `
     },
-    // 3: Проекты (обновлённые кейсы)
-    {
-        html: `
-            <h2>Проекты</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px;">
-                <div style="
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid #2a2a2a;
-                    padding: 18px 20px;
-                    border-radius: 16px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: .3s;
-                    flex: 1 1 calc(50% - 6px);
-                    min-width: 180px;
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 12px;
-                " onclick="window.open('https://t.me/rvtst','_blank')"
-                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
-                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
-                    <span style="font-size:24px;">🤖</span>
-                    <div>
-                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">AI-бот лаборант (Telegram)</div>
-                        <div style="color:#999; font-size:12px; line-height:1.5;">Отвечает пользователям, генерирует ответы через AI</div>
-                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">Открыть →</div>
-                    </div>
-                </div>
-                <div style="
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid #2a2a2a;
-                    padding: 18px 20px;
-                    border-radius: 16px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: .3s;
-                    flex: 1 1 calc(50% - 6px);
-                    min-width: 180px;
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 12px;
-                " onclick="window.open('https://t.me/rvtst','_blank')"
-                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
-                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
-                    <span style="font-size:24px;">🌐</span>
-                    <div>
-                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">Лендинг под ключ</div>
-                        <div style="color:#999; font-size:12px; line-height:1.5;">Сайт + буклет + PDF · деплой + SEO</div>
-                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">Посмотреть →</div>
-                    </div>
-                </div>
-                <div style="
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid #2a2a2a;
-                    padding: 18px 20px;
-                    border-radius: 16px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: .3s;
-                    flex: 1 1 calc(50% - 6px);
-                    min-width: 180px;
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 12px;
-                " onclick="window.open('https://t.me/rvtst','_blank')"
-                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
-                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
-                    <span style="font-size:24px;">🏛️</span>
-                    <div>
-                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">Сайт музея</div>
-                        <div style="color:#999; font-size:12px; line-height:1.5;">Дизайн + структура · адаптив + публикация</div>
-                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">Посмотреть →</div>
-                    </div>
-                </div>
-                <div style="
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid #2a2a2a;
-                    padding: 18px 20px;
-                    border-radius: 16px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: .3s;
-                    flex: 1 1 calc(50% - 6px);
-                    min-width: 180px;
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 12px;
-                " onclick="window.open('https://t.me/rvtst','_blank')"
-                   onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';this.style.transform='translateY(-2px)';"
-                   onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';this.style.transform='translateY(0)';">
-                    <span style="font-size:24px;">⚙️</span>
-                    <div>
-                        <div style="color:#fff; font-weight:600; margin-bottom:4px;">Парсеры Telegram</div>
-                        <div style="color:#999; font-size:12px; line-height:1.5;">Сбор данных · автоматизация процессов</div>
-                        <div style="color:#00ffc3; font-size:11px; margin-top:6px; font-weight:600;">GitHub →</div>
-                    </div>
+  // 3: Проекты (исправленные для мобилок)
+{
+    html: `
+        <h2>Проекты</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;">
+            <div style="
+                background: rgba(255,255,255,0.03);
+                border: 1px solid #2a2a2a;
+                padding: 14px 16px;
+                border-radius: 14px;
+                font-size: 12px;
+                font-weight: 500;
+                transition: .3s;
+                flex: 1 1 calc(50% - 5px);
+                min-width: 140px;
+                max-width: calc(50% - 5px);
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                text-decoration: none;
+                color: inherit;
+            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
+               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
+               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
+                <span style="font-size:22px; flex-shrink:0;">🤖</span>
+                <div style="min-width:0;">
+                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">AI-бот лаборант</div>
+                    <div style="color:#999; font-size:11px; line-height:1.4;">Отвечает пользователям через AI</div>
                 </div>
             </div>
-            <div class="sub" style="margin-top:20px; color:#00ffc3;">5 дней от идеи до деплоя</div>
-        `
-    },
+            <div style="
+                background: rgba(255,255,255,0.03);
+                border: 1px solid #2a2a2a;
+                padding: 14px 16px;
+                border-radius: 14px;
+                font-size: 12px;
+                font-weight: 500;
+                transition: .3s;
+                flex: 1 1 calc(50% - 5px);
+                min-width: 140px;
+                max-width: calc(50% - 5px);
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                text-decoration: none;
+                color: inherit;
+            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
+               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
+               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
+                <span style="font-size:22px; flex-shrink:0;">🌐</span>
+                <div style="min-width:0;">
+                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Лендинг под ключ</div>
+                    <div style="color:#999; font-size:11px; line-height:1.4;">Сайт + буклет + PDF · SEO</div>
+                </div>
+            </div>
+            <div style="
+                background: rgba(255,255,255,0.03);
+                border: 1px solid #2a2a2a;
+                padding: 14px 16px;
+                border-radius: 14px;
+                font-size: 12px;
+                font-weight: 500;
+                transition: .3s;
+                flex: 1 1 calc(50% - 5px);
+                min-width: 140px;
+                max-width: calc(50% - 5px);
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                text-decoration: none;
+                color: inherit;
+            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
+               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
+               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
+                <span style="font-size:22px; flex-shrink:0;">🏛️</span>
+                <div style="min-width:0;">
+                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Сайт музея</div>
+                    <div style="color:#999; font-size:11px; line-height:1.4;">Дизайн + структура · адаптив</div>
+                </div>
+            </div>
+            <div style="
+                background: rgba(255,255,255,0.03);
+                border: 1px solid #2a2a2a;
+                padding: 14px 16px;
+                border-radius: 14px;
+                font-size: 12px;
+                font-weight: 500;
+                transition: .3s;
+                flex: 1 1 calc(50% - 5px);
+                min-width: 140px;
+                max-width: calc(50% - 5px);
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                text-decoration: none;
+                color: inherit;
+            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
+               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
+               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
+                <span style="font-size:22px; flex-shrink:0;">⚙️</span>
+                <div style="min-width:0;">
+                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Парсеры Telegram</div>
+                    <div style="color:#999; font-size:11px; line-height:1.4;">Сбор данных · автоматизация</div>
+                </div>
+            </div>
+        </div>
+        <div class="sub" style="margin-top:16px; color:#00ffc3; font-size:15px;">5 дней от идеи до деплоя</div>
+    `
+},
     // 4: CTA
     {
         html: `
