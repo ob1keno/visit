@@ -1,542 +1,612 @@
+# index.html
 
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Коллективный разум · Смена полотен</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Коллективный разум</title>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+:root{
+    --bg:#030303;
+    --soft:#0b0b0b;
+    --line:rgba(180,255,240,.08);
+    --accent:#bffff2;
+    --white:#f4f4f4;
+}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #050505;
-            color: #fff;
-            overflow-x: hidden;
-        }
+html,body{
+    width:100%;
+    height:100%;
+    overflow-x:hidden;
+    background:var(--bg);
+    color:white;
+    font-family:Inter,system-ui,sans-serif;
+}
 
-        /* ===== ПРОКРУТОЧНОЕ ПРОСТРАНСТВО ===== */
-        .scroll-container {
-            position: relative;
-            height: 500vh;
-            /* 5 секций */
-        }
+body{
+    min-height:1300vh;
+}
 
-        /* ===== ФИКСИРОВАННЫЙ ВЬЮПОРТ ===== */
-        .stage {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+}
 
-        /* ===== СЕКЦИЯ (ОДНО ПОЛОТНО) ===== */
-        .panel {
-            position: absolute;
-            width: 88vw;
-            max-width: 1000px;
-            padding: 56px 48px;
-            background: rgba(12, 12, 12, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 32px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+#bg{
+    z-index:0;
+}
 
-            /* начальное состояние — скрыто снизу */
-            transform: translateY(120px) scale(0.88);
-            opacity: 0;
-            transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
-                opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
-            pointer-events: none;
-        }
+.scene{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    perspective:2200px;
+    z-index:2;
+    background:
+        radial-gradient(circle at center,
+        rgba(0,255,200,.03),
+        transparent 40%),
+        radial-gradient(circle at 20% 30%,
+        rgba(0,120,255,.04),
+        transparent 45%),
+        #020202;
+}
 
-        /* активная панель */
-        .panel.active {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
+.camera{
+    position:absolute;
+    inset:0;
+    transform-style:preserve-3d;
+    will-change:transform;
+}
 
-        /* уходящая панель (уменьшается и исчезает) */
-        .panel.exit {
-            transform: translateY(-60px) scale(0.82);
-            opacity: 0;
-            pointer-events: none;
-        }
+.layer{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform-style:preserve-3d;
+    will-change:transform,opacity,filter;
+}
 
-        /* ===== ЧАСТИЦЫ ФОН ===== */
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-        }
+.hero-title{
+    font-size:clamp(54px,9vw,160px);
+    font-weight:700;
+    line-height:.88;
+    letter-spacing:-0.07em;
+    color:rgba(255,255,255,.94);
+}
 
-        /* ===== ТИПОГРАФИКА ===== */
-        h1 {
-            font-size: clamp(36px, 6vw, 64px);
-            line-height: 1.15;
-            margin-bottom: 12px;
-        }
+.ghost{
+    color:rgba(255,255,255,.12);
+}
 
-        h2 {
-            font-size: clamp(26px, 4vw, 42px);
-            margin-bottom: 16px;
-        }
+.micro{
+    color:rgba(255,255,255,.18);
+    font-size:11px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+}
 
-        .sub {
-            color: #999;
-            font-size: 17px;
-            margin-bottom: 8px;
-        }
+.sub{
+    margin-top:24px;
+    font-size:13px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.38);
+}
 
-        .accent {
-            color: #00ffc3;
-        }
+.description{
+    margin-top:14px;
+    max-width:640px;
+    color:rgba(255,255,255,.48);
+    line-height:1.7;
+    font-size:15px;
+}
 
-        .gold {
-            color: #f0a500;
-        }
+.word{
+    position:absolute;
+    color:rgba(255,255,255,.44);
+    font-size:13px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    white-space:nowrap;
+}
 
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 13px 28px;
-            border-radius: 50px;
-            background: #00ffc3;
-            color: #000;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: .3s;
-        }
+.reveal{
+    text-align:center;
+}
 
-        .btn:hover {
-            box-shadow: 0 0 28px rgba(0, 255, 195, 0.5);
-            transform: translateY(-2px);
-        }
+.reveal .small{
+    font-size:14px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.25);
+}
 
-        .grid-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 20px;
-        }
+.reveal .name{
+    margin-top:22px;
+    font-size:clamp(46px,7vw,124px);
+    line-height:.92;
+    letter-spacing:-0.06em;
+    font-weight:700;
+}
 
-        .tag {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid #2a2a2a;
-            padding: 12px 22px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: .3s;
-        }
+.reveal .role{
+    margin-top:18px;
+    color:rgba(255,255,255,.42);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:13px;
+}
 
-        .tag:hover {
-            border-color: #00ffc3;
-            background: rgba(0, 255, 195, 0.05);
-        }
+.project-card{
+    position:absolute;
+    width:280px;
+    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    backdrop-filter:blur(14px);
+    border-radius:26px;
+    padding:26px;
+}
 
-        .name-block {
-            margin-top: 20px;
-        }
+.project-title{
+    font-size:14px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:white;
+}
 
-        .name-block b {
-            font-size: 22px;
-        }
+.project-desc{
+    margin-top:12px;
+    color:rgba(255,255,255,.46);
+    line-height:1.7;
+    font-size:12px;
+    letter-spacing:.05em;
+}
 
-        .name-block span {
-            display: block;
-            color: #777;
-            font-size: 15px;
-            margin-top: 4px;
-        }
+.cta{
+    text-align:center;
+}
 
-        /* скролл-индикатор */
-        .scroll-indicator {
-            position: fixed;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #555;
-            font-size: 13px;
-            z-index: 10;
-            pointer-events: none;
-            transition: opacity 0.4s;
-        }
+.cta h2{
+    font-size:clamp(54px,9vw,160px);
+    line-height:.9;
+    letter-spacing:-0.07em;
+}
 
-        footer {
-            position: fixed;
-            bottom: 8px;
-            width: 100%;
-            text-align: center;
-            color: #444;
-            font-size: 12px;
-            z-index: 5;
-            pointer-events: none;
-        }
+.cta p{
+    margin-top:18px;
+    color:rgba(255,255,255,.42);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:13px;
+}
 
-        @media (max-width: 600px) {
-            .panel {
-                padding: 36px 24px;
-                width: 94vw;
-            }
-        }
-    </style>
+.cta a{
+    display:inline-flex;
+    margin-top:42px;
+    padding:18px 34px;
+    border-radius:999px;
+    background:white;
+    color:black;
+    text-decoration:none;
+    font-weight:600;
+    transition:.4s;
+}
+
+.cta a:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 40px rgba(255,255,255,.14);
+}
+
+.vignette{
+    position:fixed;
+    inset:0;
+    z-index:8;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at center,
+        transparent 42%,
+        rgba(0,0,0,.55));
+}
+
+.noise{
+    position:fixed;
+    inset:0;
+    z-index:9;
+    pointer-events:none;
+    opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+.scroll{
+    position:fixed;
+    bottom:34px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:20;
+    color:rgba(255,255,255,.24);
+    font-size:11px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+}
+
+.footer{
+    position:fixed;
+    bottom:14px;
+    left:20px;
+    z-index:20;
+    color:rgba(255,255,255,.14);
+    font-size:10px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+}
+
+.ambient{
+    position:fixed;
+    inset:-20%;
+    z-index:1;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at center,
+        rgba(0,255,200,.08),
+        transparent 45%);
+    filter:blur(120px);
+    animation:breathe 8s ease-in-out infinite;
+}
+
+@keyframes breathe{
+    0%{transform:scale(1);opacity:.35;}
+    50%{transform:scale(1.14);opacity:.7;}
+    100%{transform:scale(1);opacity:.35;}
+}
+
+@media(max-width:700px){
+    .project-card{
+        width:220px;
+        padding:20px;
+    }
+
+    .word{
+        font-size:10px;
+    }
+}
+</style>
 </head>
-
 <body>
 
-    <!-- частицы -->
-    <canvas id="bg"></canvas>
+<canvas id="bg"></canvas>
 
-    <!-- сцена -->
-    <div class="stage" id="stage">
-        <!-- панели будут созданы в JS -->
-    </div>
+<div class="ambient"></div>
 
-    <!-- прокруточное пространство -->
-    <div class="scroll-container" id="scrollContainer"></div>
+<div class="scene">
+<div class="camera" id="camera">
 
-    <div class="scroll-indicator" id="scrollIndicator">↓ скролль</div>
-    <footer>Ренат Ахатов · Коллективный разум · t.me/rvtst</footer>
+<div class="layer" id="hero">
+<div>
+<div class="micro">панель 0 · signal detected</div>
+<div class="hero-title">
+Коллективный<br>
+<span class="ghost">разум</span>
+</div>
+<div class="sub">Не совсем студия</div>
+<div class="description">
+Делаю проекты за дни, когда у других это недели
+</div>
+</div>
+</div>
 
-    <script>
-        /* ===== ЧАСТИЦЫ ===== */
-        const canvas = document.getElementById('bg');
-        const ctx = canvas.getContext('2d');
-        let w, h;
-        let mouse = { x: -1000, y: -1000 };
+<div class="layer" id="system"></div>
 
-        function resizeCanvas() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+<div class="layer reveal" id="reveal">
+<div class="small">панель 2 · разоблачение</div>
+<div class="name">На самом деле —<br>один человек</div>
+<div class="role">Без менеджеров · Без передачи задач</div>
+<div class="description" style="margin-inline:auto;">
+Вам не нужно управлять командой.
+Вам нужен человек, который доведёт до результата.
+</div>
+</div>
 
-        window.addEventListener('mousemove', e => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-        window.addEventListener('mouseleave', () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        });
+<div class="layer" id="identity">
+<div class="reveal">
+<div class="small">панель 3 · личность</div>
+<div class="name">Ренат Ахатов</div>
+<div class="role">Tech-директор · AI-инженер</div>
+</div>
+</div>
 
-        const particles = [];
-        for (let i = 0; i < 70; i++) {
-            particles.push({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4,
-                r: Math.random() * 2 + 0.8
-            });
-        }
+<div class="layer" id="projects1"></div>
+<div class="layer" id="projects2"></div>
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, w, h);
-            particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < -10) p.x = w + 10;
-                if (p.x > w + 10) p.x = -10;
-                if (p.y < -10) p.y = h + 10;
-                if (p.y > h + 10) p.y = -10;
+<div class="layer cta" id="cta">
+<div class="micro">панель 6 · CTA</div>
+<h2>Вам не нужна<br>команда</h2>
+<p>Вам нужен результат</p>
+<a href="https://t.me/rvtst">@rvtst</a>
+<div class="description" style="margin-inline:auto;text-transform:uppercase;letter-spacing:.16em;font-size:11px;">
+связь напрямую · без менеджеров
+</div>
+</div>
 
-                const dx = mouse.x - p.x;
-                const dy = mouse.y - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 140 && dist > 0) {
-                    const f = (140 - dist) / 140;
-                    p.x -= dx * f * 0.025;
-                    p.y -= dy * f * 0.025;
-                }
+</div>
+</div>
 
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0, 255, 195, 0.55)';
-                ctx.fill();
-            });
+<div class="vignette"></div>
+<div class="noise"></div>
+<div class="scroll">scroll into the system</div>
+<div class="footer">Ренат Ахатов · Коллективный разум · t.me/rvtst</div>
 
-            // линии
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const d = Math.sqrt(dx * dx + dy * dy);
-                    if (d < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle =
-                            `rgba(0,255,195,${0.05*(1-d/120)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(drawParticles);
-        }
-        drawParticles();
+<script>
+const bg = document.getElementById('bg');
+const ctx = bg.getContext('2d');
 
-        /* ===== ПАНЕЛИ ===== */
-        const stage = document.getElementById('stage');
-        const scrollContainer = document.getElementById('scrollContainer');
-        const scrollIndicator = document.getElementById('scrollIndicator');
+let w,h;
 
-        const panelsData = [
-    // 0: Хиро
-    {
-        html: `
-            <h1>Коллективный<br>разум</h1>
-            <div class="sub" style="font-size:20px;color:#ccc;">Не совсем студия</div>
-            <div class="sub" style="margin-top:10px;">Делаю проекты за дни,<br>когда у других это недели</div>
-            <div class="sub" style="margin-top:8px;font-size:14px;color:#666;">↓ скролль вниз</div>
-        `
-    },
-    // 1: Команда
-    {
-        html: `
-            <h2>Команда без лишнего шума</h2>
-            <div class="grid-tags">
-                <div class="tag">Архитектура</div>
-                <div class="tag">Дизайн</div>
-                <div class="tag">Разработка</div>
-                <div class="tag">AI</div>
-                <div class="tag">Деплой</div>
-            </div>
-        `
-    },
-    // 2: Разоблачение
-    {
-        html: `
-            <h2>На самом деле — <span class="accent">один человек</span></h2>
-            <div class="sub" style="font-size:18px;">Без менеджеров · Без передачи задач</div>
-            <div class="sub" style="margin-top:12px; color:#aaa;">Вам не нужно управлять командой.<br>Вам нужен человек, который доведёт до результата.</div>
-            <div class="name-block">
-                <b>Ренат Ахатов</b>
-                <span>Tech-директор · AI-инженер</span>
-            </div>
-        `
-    },
-  // 3: Проекты (исправленные для мобилок)
-{
-    html: `
-        <h2>Проекты</h2>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;">
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">🤖</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">AI-бот лаборант</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Отвечает пользователям через AI</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">🌐</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Лендинг под ключ</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Сайт + буклет + PDF · SEO</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">🏛️</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Сайт музея</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Дизайн + структура · адаптив</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid #2a2a2a;
-                padding: 14px 16px;
-                border-radius: 14px;
-                font-size: 12px;
-                font-weight: 500;
-                transition: .3s;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 140px;
-                max-width: calc(50% - 5px);
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                text-decoration: none;
-                color: inherit;
-            " onclick="event.stopPropagation(); window.open('https://t.me/rvtst','_blank')"
-               onmouseenter="this.style.borderColor='#00ffc3';this.style.background='rgba(0,255,195,0.06)';"
-               onmouseleave="this.style.borderColor='#2a2a2a';this.style.background='rgba(255,255,255,0.03)';">
-                <span style="font-size:22px; flex-shrink:0;">⚙️</span>
-                <div style="min-width:0;">
-                    <div style="color:#fff; font-weight:600; margin-bottom:3px; font-size:13px;">Парсеры Telegram</div>
-                    <div style="color:#999; font-size:11px; line-height:1.4;">Сбор данных · автоматизация</div>
-                </div>
-            </div>
-        </div>
-        <div class="sub" style="margin-top:16px; color:#00ffc3; font-size:15px;">5 дней от идеи до деплоя</div>
-    `
-},
-    // 4: CTA
-    {
-        html: `
-            <h2>Вам не нужна команда</h2>
-            <div class="sub" style="font-size:20px;color:#ccc;">Вам нужен результат</div>
-            <a href="https://t.me/rvtst" class="btn">@rvtst</a>
-            <div style="margin-top:14px;font-size:14px;color:#666;">связь напрямую · без менеджеров</div>
-        `
-    }
+function resize(){
+    w = bg.width = innerWidth;
+    h = bg.height = innerHeight;
+}
+
+resize();
+addEventListener('resize', resize);
+
+const camera = document.getElementById('camera');
+
+const hero = document.getElementById('hero');
+const system = document.getElementById('system');
+const reveal = document.getElementById('reveal');
+const identity = document.getElementById('identity');
+const projects1 = document.getElementById('projects1');
+const projects2 = document.getElementById('projects2');
+const cta = document.getElementById('cta');
+
+const words = [
+'Команда без лишнего шума',
+'Архитектура',
+'Дизайн',
+'Разработка',
+'AI',
+'Деплой',
+'architecture','signal','runtime','logic','inference',
+'orchestration','workflow','backend','automation','vector'
 ];
-        const panels = [];
-        const totalPanels = panelsData.length;
 
-        panelsData.forEach((data, i) => {
-            const panel = document.createElement('div');
-            panel.className = 'panel';
-            panel.innerHTML = data.html;
-            panel.dataset.index = i;
-            stage.appendChild(panel);
-            panels.push(panel);
-        });
+for(let i=0;i<26;i++){
+    const el = document.createElement('div');
+    el.className='word';
+    el.innerText = words[i % words.length];
 
-        // Первая панель активна
-        panels[0].classList.add('active');
+    const x = Math.random()*1600 - 800;
+    const y = Math.random()*900 - 450;
 
-        /* ===== ЛОГИКА СКРОЛЛА ===== */
-        const panelHeight = window.innerHeight; // высота скролла на одну смену
-        const totalScrollHeight = panelHeight * totalPanels;
-        scrollContainer.style.height = totalScrollHeight + 'px';
+    el.dataset.x = x;
+    el.dataset.y = y;
 
-        let currentActive = 0;
+    el.style.left = x+'px';
+    el.style.top = y+'px';
 
-        function updatePanels() {
-            const scrollY = window.scrollY;
-            const rawIndex = scrollY / panelHeight;
-            const activeIndex = Math.min(Math.floor(rawIndex), totalPanels - 1);
+    system.appendChild(el);
+}
 
-            // прогресс внутри текущего перехода (0..1)
-            const progress = rawIndex - activeIndex;
+const p1 = [
+['AI-бот лаборант','Отвечает пользователям через AI'],
+['Лендинг под ключ','Сайт + буклет + PDF · SEO'],
+['AI-аватар','Голос · логика · сценарии']
+];
 
-            if (activeIndex !== currentActive) {
-                // Снимаем все классы и сбрасываем инлайн-стили у всех панелей
-                panels.forEach(p => {
-                    p.classList.remove('active', 'exit');
-                    p.style.transform = '';
-                    p.style.opacity = '';
-                });
+const p2 = [
+['Сайт музея','Дизайн + структура · адаптив'],
+['Telegram parsers','Сбор данных · автоматизация'],
+['5 дней','От идеи до деплоя']
+];
 
-                // Назначаем новой активной панели класс active
-                panels[activeIndex].classList.add('active');
-                
-                // Панель, которая была активна, получает класс exit,
-                // если она существует и не совпадает с новой активной
-                if (currentActive < panels.length && currentActive !== activeIndex) {
-                    panels[currentActive].classList.add('exit');
+function card(title,desc,x,y,parent){
+    const el = document.createElement('div');
+    el.className='project-card';
+    el.style.left=x+'px';
+    el.style.top=y+'px';
+    el.innerHTML=`
+        <div class="project-title">${title}</div>
+        <div class="project-desc">${desc}</div>
+    `;
+    parent.appendChild(el);
+}
+
+card(...p1[0],-420,-160,projects1);
+card(...p1[1],40,-20,projects1);
+card(...p1[2],-180,220,projects1);
+
+card(...p2[0],-360,-100,projects2);
+card(...p2[1],120,40,projects2);
+card(...p2[2],-80,240,projects2);
+
+const particles = [];
+
+for(let i=0;i<140;i++){
+    particles.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        vx:(Math.random()-.5)*.08,
+        vy:(Math.random()-.5)*.08,
+        size:Math.random()*2
+    });
+}
+
+function range(a,b,t){
+    return Math.max(0,Math.min(1,(t-a)/(b-a)));
+}
+
+function draw(progress){
+    ctx.clearRect(0,0,w,h);
+
+    const fog = ctx.createRadialGradient(
+        w/2,h/2,0,
+        w/2,h/2,
+        Math.max(w,h)
+    );
+
+    fog.addColorStop(0,'rgba(0,255,200,.03)');
+    fog.addColorStop(1,'rgba(0,0,0,.7)');
+
+    ctx.fillStyle=fog;
+    ctx.fillRect(0,0,w,h);
+
+    particles.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if(p.x<0)p.x=w;
+        if(p.x>w)p.x=0;
+        if(p.y<0)p.y=h;
+        if(p.y>h)p.y=0;
+    });
+
+    let connectionDistance = 120;
+
+    if(progress>.32 && progress<.52){
+        connectionDistance = 180;
+    }
+
+    if(progress>.52 && progress<.68){
+        connectionDistance = 70;
+    }
+
+    if(progress>.68){
+        connectionDistance = 100;
+    }
+
+    for(let i=0;i<particles.length;i++){
+        const a = particles[i];
+
+        for(let j=i+1;j<particles.length;j++){
+            const b = particles[j];
+
+            const dx = a.x-b.x;
+            const dy = a.y-b.y;
+            const dist = Math.sqrt(dx*dx+dy*dy);
+
+            if(dist<connectionDistance){
+                ctx.beginPath();
+                ctx.moveTo(a.x,a.y);
+                ctx.lineTo(b.x,b.y);
+
+                let alpha = .05;
+
+                if(progress>.32 && progress<.52){
+                    alpha = .09;
                 }
-                
-                currentActive = activeIndex;
-            }
 
-            // Плавное угасание активной панели к концу её зоны
-            if (progress > 0.5 && activeIndex < totalPanels - 1) {
-                const fadeProgress = (progress - 0.5) * 2; // 0..1 во второй половине
-                panels[activeIndex].style.transform =
-                    `translateY(${-50 * fadeProgress}px) scale(${1 - 0.12 * fadeProgress})`;
-                panels[activeIndex].style.opacity = 1 - fadeProgress * 0.85;
-            } else {
-                // Возвращаем к исходным значениям (важно при скролле вверх)
-                panels[activeIndex].style.transform = 'translateY(0) scale(1)';
-                panels[activeIndex].style.opacity = '1';
-            }
+                if(progress>.52 && progress<.68){
+                    alpha = .03;
+                }
 
-            // Индикатор скролла
-            if (scrollY < 100) {
-                scrollIndicator.style.opacity = '1';
-            } else {
-                scrollIndicator.style.opacity = '0';
+                ctx.strokeStyle=`rgba(180,255,240,${alpha})`;
+                ctx.stroke();
             }
         }
+    }
 
-        window.addEventListener('scroll', updatePanels);
-        window.addEventListener('resize', () => {
-            // пересчёт высоты
-            const newPanelHeight = window.innerHeight;
-            scrollContainer.style.height = (newPanelHeight * totalPanels) + 'px';
-            updatePanels();
-        });
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
 
-        // начальное состояние
-        updatePanels();
-    </script>
+        let alpha=.12;
+
+        if(progress>.82){
+            alpha=.06;
+        }
+
+        ctx.fillStyle=`rgba(220,255,245,${alpha})`;
+        ctx.fill();
+    });
+}
+
+let smooth = 0;
+
+function animate(){
+
+    const target = scrollY / (document.body.scrollHeight - innerHeight);
+
+    smooth += (target - smooth) * .06;
+
+    draw(smooth);
+
+    const camDrift = 1 - smooth * .55;
+
+    const rx = Math.sin(smooth*5) * 5 * camDrift;
+    const ry = Math.cos(smooth*4) * 8 * camDrift;
+
+    const dx = Math.sin(smooth*10) * 40 * camDrift;
+    const dy = Math.cos(smooth*8) * 30 * camDrift;
+
+    const zoom = 1 + smooth * .04;
+
+    camera.style.transform=`
+        scale(${zoom})
+        rotateX(${rx}deg)
+        rotateY(${ry}deg)
+        translate3d(${dx}px,${dy}px,0)
+    `;
+
+    const heroPhase = range(0,.18,smooth);
+    const systemPhase = range(.12,.38,smooth);
+    const revealPhase = range(.34,.52,smooth);
+    const identityPhase = range(.5,.66,smooth);
+    const project1Phase = range(.64,.78,smooth);
+    const project2Phase = range(.76,.9,smooth);
+    const ctaPhase = range(.88,1,smooth);
+
+    hero.style.transform=`translate3d(-50%,-50%,${heroPhase*1200}px)`;
+    hero.style.opacity=1-heroPhase*1.3;
+
+    system.style.transform=`translate3d(-50%,-50%,${-2400 + systemPhase*3200}px)`;
+    system.style.opacity=systemPhase<1 ? 1 : 0;
+
+    [...system.children].forEach(el=>{
+        let collapse = 0;
+
+        if(systemPhase>.7){
+            collapse = (systemPhase-.7)*4;
+        }
+
+        const x = parseFloat(el.dataset.x);
+        const y = parseFloat(el.dataset.y);
+
+        el.style.transform=`translate(${x*-collapse}px,${y*-collapse}px)`;
+    });
+
+    reveal.style.transform=`translate3d(-50%,-50%,${-3400 + revealPhase*4200}px)`;
+    reveal.style.opacity=Math.sin(revealPhase*Math.PI);
+
+    identity.style.transform=`translate3d(-50%,-50%,${-4200 + identityPhase*5000}px)`;
+    identity.style.opacity=Math.sin(identityPhase*Math.PI);
+
+    projects1.style.transform=`translate3d(-50%,-50%,${-5600 + project1Phase*6400}px)`;
+    projects1.style.opacity=Math.sin(project1Phase*Math.PI);
+
+    projects2.style.transform=`translate3d(-50%,-50%,${-7600 + project2Phase*8200}px)`;
+    projects2.style.opacity=Math.sin(project2Phase*Math.PI);
+
+    cta.style.transform=`translate3d(-50%,-50%,${-10400 + ctaPhase*11000}px)`;
+    cta.style.opacity=ctaPhase;
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
 
 </body>
 </html>
+```
