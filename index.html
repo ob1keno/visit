@@ -1,0 +1,589 @@
+# index.html
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Коллективный разум</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#030303;
+    --soft:#0b0b0b;
+    --line:rgba(180,255,240,.08);
+    --accent:#bffff2;
+    --white:#f4f4f4;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow-x:hidden;
+    background:var(--bg);
+    color:white;
+    font-family:Inter,system-ui,sans-serif;
+}
+
+body{
+    min-height:1300vh;
+}
+
+canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+#bg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    opacity:1;
+}
+
+.scene{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    perspective:2200px;
+    z-index:2;
+    /* убраны зелёные/синие radial-gradient — просто тёмный фон */
+    background:#030303;
+}
+
+.camera{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    transform-style:preserve-3d;
+    will-change:transform;
+}
+
+.layer{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform-style:preserve-3d;
+    will-change:transform,opacity,filter;
+}
+
+.hero-title{
+    font-size:clamp(54px,9vw,160px);
+    font-weight:700;
+    line-height:.88;
+    letter-spacing:-0.07em;
+    color:rgba(255,255,255,.94);
+}
+
+.ghost{
+    color:rgba(255,255,255,.12);
+}
+
+.micro{
+    color:rgba(255,255,255,.18);
+    font-size:11px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+}
+
+.sub{
+    margin-top:24px;
+    font-size:13px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.38);
+}
+
+.description{
+    margin-top:14px;
+    max-width:640px;
+    color:rgba(255,255,255,.48);
+    line-height:1.7;
+    font-size:15px;
+}
+
+.word{
+    position:absolute;
+    color:rgba(255,255,255,.44);
+    font-size:13px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    white-space:nowrap;
+}
+
+.reveal{
+    text-align:center;
+}
+
+.reveal .small{
+    font-size:14px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.25);
+}
+
+.reveal .name{
+    margin-top:22px;
+    font-size:clamp(46px,7vw,124px);
+    line-height:.92;
+    letter-spacing:-0.06em;
+    font-weight:700;
+}
+
+.reveal .role{
+    margin-top:18px;
+    color:rgba(255,255,255,.42);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:13px;
+}
+
+.project-card{
+    position:absolute;
+    width:280px;
+    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    backdrop-filter:blur(14px);
+    border-radius:26px;
+    padding:26px;
+}
+
+.project-title{
+    font-size:14px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:white;
+}
+
+.project-desc{
+    margin-top:12px;
+    color:rgba(255,255,255,.46);
+    line-height:1.7;
+    font-size:12px;
+    letter-spacing:.05em;
+}
+
+.cta{
+    text-align:center;
+}
+
+.cta h2{
+    font-size:clamp(54px,9vw,160px);
+    line-height:.9;
+    letter-spacing:-0.07em;
+}
+
+.cta p{
+    margin-top:18px;
+    color:rgba(255,255,255,.42);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:13px;
+}
+
+.cta a{
+    display:inline-flex;
+    margin-top:42px;
+    padding:18px 34px;
+    border-radius:999px;
+    background:white;
+    color:black;
+    text-decoration:none;
+    font-weight:600;
+    transition:.4s;
+}
+
+.cta a:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 40px rgba(255,255,255,.14);
+}
+
+.vignette{
+    position:fixed;
+    inset:0;
+    z-index:8;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at center,
+        transparent 42%,
+        rgba(0,0,0,.55));
+}
+
+.noise{
+    position:fixed;
+    inset:0;
+    z-index:9;
+    pointer-events:none;
+    opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+.scroll{
+    position:fixed;
+    bottom:34px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:20;
+    color:rgba(255,255,255,.24);
+    font-size:11px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+}
+
+.footer{
+    position:fixed;
+    bottom:14px;
+    left:20px;
+    z-index:20;
+    color:rgba(255,255,255,.14);
+    font-size:10px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+}
+
+.ambient{
+    position:absolute;
+    inset:-20%;
+    z-index:1;
+    pointer-events:none;
+    /* нейтральный холодно-синий, почти невидим — даёт ощущение глубины без зелени */
+    background:
+        radial-gradient(circle at 40% 45%,
+        rgba(40,60,120,.06),
+        transparent 55%);
+    filter:blur(100px);
+    animation:breathe 10s ease-in-out infinite;
+}
+
+@keyframes breathe{
+    0%  {transform:scale(1);   opacity:.4;}
+    50% {transform:scale(1.08);opacity:.7;}
+    100%{transform:scale(1);   opacity:.4;}
+}
+
+@media(max-width:700px){
+    .project-card{
+        width:220px;
+        padding:20px;
+    }
+
+    .word{
+        font-size:10px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="scene">
+<canvas id="bg"></canvas>
+<div class="ambient"></div>
+<div class="camera" id="camera">
+
+<div class="layer" id="hero">
+<div>
+<div class="micro">панель 0 · signal detected</div>
+<div class="hero-title">
+Коллективный<br>
+<span class="ghost">разум</span>
+</div>
+<div class="sub">Не совсем студия</div>
+<div class="description">
+Делаю проекты за дни, когда у других это недели
+</div>
+</div>
+</div>
+
+<div class="layer" id="system"></div>
+
+<div class="layer reveal" id="reveal">
+<div class="small">панель 2 · разоблачение</div>
+<div class="name">На самом деле —<br>один человек</div>
+<div class="role">Без менеджеров · Без передачи задач</div>
+<div class="description" style="margin-inline:auto;">
+Вам не нужно управлять командой.
+Вам нужен человек, который доведёт до результата.
+</div>
+</div>
+
+<div class="layer" id="identity">
+<div class="reveal">
+<div class="small">панель 3 · личность</div>
+<div class="name">Ренат Ахатов</div>
+<div class="role">Tech-директор · AI-инженер</div>
+</div>
+</div>
+
+<div class="layer" id="projects1"></div>
+<div class="layer" id="projects2"></div>
+
+<div class="layer cta" id="cta">
+<div class="micro">панель 6 · CTA</div>
+<h2>Вам не нужна<br>команда</h2>
+<p>Вам нужен результат</p>
+<a href="https://t.me/rvtst">@rvtst</a>
+<div class="description" style="margin-inline:auto;text-transform:uppercase;letter-spacing:.16em;font-size:11px;">
+связь напрямую · без менеджеров
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="vignette"></div>
+<div class="noise"></div>
+<div class="scroll">scroll into the system</div>
+<div class="footer">Ренат Ахатов · Коллективный разум · t.me/rvtst</div>
+
+<script>
+const bg = document.getElementById('bg');
+const ctx = bg.getContext('2d');
+
+let w,h;
+
+function resize(){
+    w = bg.width = innerWidth;
+    h = bg.height = innerHeight;
+}
+
+resize();
+addEventListener('resize', resize);
+
+const camera = document.getElementById('camera');
+
+const hero = document.getElementById('hero');
+const system = document.getElementById('system');
+const reveal = document.getElementById('reveal');
+const identity = document.getElementById('identity');
+const projects1 = document.getElementById('projects1');
+const projects2 = document.getElementById('projects2');
+const cta = document.getElementById('cta');
+
+const words = [
+'Команда без лишнего шума',
+'Архитектура',
+'Дизайн',
+'Разработка',
+'AI',
+'Деплой',
+'architecture','signal','runtime','logic','inference',
+'orchestration','workflow','backend','automation','vector'
+];
+
+for(let i=0;i<26;i++){
+    const el = document.createElement('div');
+    el.className='word';
+    el.innerText = words[i % words.length];
+
+    const x = Math.random()*1600 - 800;
+    const y = Math.random()*900 - 450;
+
+    el.dataset.x = x;
+    el.dataset.y = y;
+
+    el.style.left = x+'px';
+    el.style.top = y+'px';
+
+    system.appendChild(el);
+}
+
+const p1 = [
+['AI-бот лаборант','Отвечает пользователям через AI'],
+['Лендинг под ключ','Сайт + буклет + PDF · SEO'],
+['AI-аватар','Голос · логика · сценарии']
+];
+
+const p2 = [
+['Сайт музея','Дизайн + структура · адаптив'],
+['Telegram parsers','Сбор данных · автоматизация'],
+['5 дней','От идеи до деплоя']
+];
+
+function card(title,desc,x,y,parent){
+    const el = document.createElement('div');
+    el.className='project-card';
+    el.style.left=x+'px';
+    el.style.top=y+'px';
+    el.innerHTML=`
+        <div class="project-title">${title}</div>
+        <div class="project-desc">${desc}</div>
+    `;
+    parent.appendChild(el);
+}
+
+card(...p1[0],-420,-160,projects1);
+card(...p1[1],40,-20,projects1);
+card(...p1[2],-180,220,projects1);
+
+card(...p2[0],-360,-100,projects2);
+card(...p2[1],120,40,projects2);
+card(...p2[2],-80,240,projects2);
+
+const particles = [];
+
+for(let i=0;i<140;i++){
+    particles.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        vx:(Math.random()-.5)*.08,
+        vy:(Math.random()-.5)*.08,
+        size:Math.random()*2
+    });
+}
+
+function range(a,b,t){
+    return Math.max(0,Math.min(1,(t-a)/(b-a)));
+}
+
+function draw(progress){
+    /* тёмный trail — чуть гуще чем раньше, чтобы частицы не светились */
+    ctx.fillStyle='rgba(3,3,3,.18)';
+    ctx.fillRect(0,0,w,h);
+
+    /* мягкий нейтральный туман — даёт ощущение глубины без цвета */
+    const fog = ctx.createRadialGradient(w/2,h*.45,0, w/2,h*.55, Math.max(w,h)*.85);
+    fog.addColorStop(0,'rgba(255,255,255,.008)');
+    fog.addColorStop(.5,'rgba(0,0,0,.0)');
+    fog.addColorStop(1,'rgba(0,0,0,.35)');
+    ctx.fillStyle = fog;
+    ctx.fillRect(0,0,w,h);
+
+    particles.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+        if(p.x<0)p.x=w; if(p.x>w)p.x=0;
+        if(p.y<0)p.y=h; if(p.y>h)p.y=0;
+    });
+
+    /* соединения — нейтральный тёплый белый, очень тихие */
+    let connectionDistance = 160;
+    if(progress>.32 && progress<.52) connectionDistance = 180;
+    if(progress>.52 && progress<.68) connectionDistance = 70;
+    if(progress>.68) connectionDistance = 100;
+
+    for(let i=0;i<particles.length;i++){
+        const a = particles[i];
+        for(let j=i+1;j<particles.length;j++){
+            const b = particles[j];
+            const dx=a.x-b.x, dy=a.y-b.y;
+            const dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist<connectionDistance){
+                const fade = 1 - dist/connectionDistance;
+                /* очень тихий нейтральный белый — не отвлекает */
+                let alpha = .028;
+                if(progress>.32 && progress<.52) alpha = .038;
+                if(progress>.52 && progress<.68) alpha = .018;
+                ctx.beginPath();
+                ctx.moveTo(a.x,a.y);
+                ctx.lineTo(b.x,b.y);
+                ctx.strokeStyle=`rgba(200,210,220,${alpha*fade})`;
+                ctx.lineWidth=.5;
+                ctx.stroke();
+            }
+        }
+    }
+
+    /* частицы — пылинки: нейтральный тёплый белый, малый размер, низкий alpha */
+    particles.forEach(p=>{
+        let alpha = .10;
+        if(progress>.82) alpha = .055;
+
+        /* размер ~.5–1px — точки, не круги */
+        const r = p.size * .45 + .15;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(210,215,220,${alpha})`;
+        ctx.fill();
+    });
+}
+
+let smooth = 0;
+
+function animate(){
+
+    const target = scrollY / (document.body.scrollHeight - innerHeight);
+
+    smooth += (target - smooth) * .06;
+
+    draw(smooth);
+
+    const camDrift = 1 - smooth * .55;
+
+    const rx = Math.sin(smooth*5) * 5 * camDrift;
+    const ry = Math.cos(smooth*4) * 8 * camDrift;
+
+    const dx = Math.sin(smooth*10) * 40 * camDrift;
+    const dy = Math.cos(smooth*8) * 30 * camDrift;
+
+    const zoom = 1 + smooth * .04;
+
+    camera.style.transform=`
+        scale(${zoom})
+        rotateX(${rx}deg)
+        rotateY(${ry}deg)
+        translate3d(${dx}px,${dy}px,0)
+    `;
+
+    const heroPhase = range(0,.18,smooth);
+    const systemPhase = range(.12,.38,smooth);
+    const revealPhase = range(.34,.52,smooth);
+    const identityPhase = range(.5,.66,smooth);
+    const project1Phase = range(.64,.78,smooth);
+    const project2Phase = range(.76,.9,smooth);
+    const ctaPhase = range(.88,1,smooth);
+
+    hero.style.transform=`translate3d(-50%,-50%,${heroPhase*1200}px)`;
+    hero.style.opacity=1-heroPhase*1.3;
+
+    system.style.transform=`translate3d(-50%,-50%,${-2400 + systemPhase*3200}px)`;
+    system.style.opacity=systemPhase<1 ? 1 : 0;
+
+    [...system.children].forEach(el=>{
+        let collapse = 0;
+
+        if(systemPhase>.7){
+            collapse = (systemPhase-.7)*4;
+        }
+
+        const x = parseFloat(el.dataset.x);
+        const y = parseFloat(el.dataset.y);
+
+        el.style.transform=`translate(${x*-collapse}px,${y*-collapse}px)`;
+    });
+
+    reveal.style.transform=`translate3d(-50%,-50%,${-3400 + revealPhase*4200}px)`;
+    reveal.style.opacity=Math.sin(revealPhase*Math.PI);
+
+    identity.style.transform=`translate3d(-50%,-50%,${-4200 + identityPhase*5000}px)`;
+    identity.style.opacity=Math.sin(identityPhase*Math.PI);
+
+    projects1.style.transform=`translate3d(-50%,-50%,${-5600 + project1Phase*6400}px)`;
+    projects1.style.opacity=Math.sin(project1Phase*Math.PI);
+
+    projects2.style.transform=`translate3d(-50%,-50%,${-7600 + project2Phase*8200}px)`;
+    projects2.style.opacity=Math.sin(project2Phase*Math.PI);
+
+    cta.style.transform=`translate3d(-50%,-50%,${-10400 + ctaPhase*11000}px)`;
+    cta.style.opacity=ctaPhase;
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
+```
